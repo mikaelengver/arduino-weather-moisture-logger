@@ -1,5 +1,6 @@
 
-#include <dht11.h>  //Import needed libraries
+#include <dht11.h>
+#include <SoftwareSerial.h> 
 
 dht11 DHT11;  //Declare objects
 
