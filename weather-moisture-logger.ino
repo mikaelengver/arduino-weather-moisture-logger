@@ -1,6 +1,7 @@
 
 #include <dht11.h>
-#include <SoftwareSerial.h> 
+//#include <SoftwareSerial.h> 
+#include <ESP8266WiFi.h>
 
 dht11 DHT11;  //Declare objects
 
@@ -8,13 +9,60 @@ dht11 DHT11;  //Declare objects
 int sensorPin = A15;    // Analog select the input pin for the potentiometer
 int sensorValue = 0;
 
+const String ssid = "Yo";
+const String password = "ss5983HG#udk33!";
+//SoftwareSerial esp(6, 7);// RX, TX
+
 void setup()
 {
-  Serial.begin(9600);
+  
+  Serial.begin(115200);
+  delay(10);
   Serial.println("DHT11 TEST PROGRAM ");
   Serial.print("LIBRARY VERSION: ");
   Serial.println(DHT11LIB_VERSION);
   Serial.println();
+
+  //reset();
+  //connectWifi();
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");  
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  //}
+  //catch(int e)
+  //{
+  //  Serial.println(e)
+  //}
+}
+
+void reset() {
+  esp.println("AT+RST");
+  delay(1000);
+  if(esp.find("OK") ) Serial.println("Module Reset");
+}
+
+void connectWifi() {
+  Serial.println("connectWifi!");
+  String cmd = "AT+CWJAP=\"" +ssid+"\",\"" + password + "\"";
+  esp.println(cmd);
+  delay(4000);
+  if(esp.find("OK")) {
+    Serial.println("Connected!");
+  }
+  else {
+    connectWifi();
+    Serial.println("Cannot connect to wifi"); 
+  }
 }
 
 void loop()
